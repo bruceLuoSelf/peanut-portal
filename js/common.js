@@ -247,7 +247,7 @@ Date.prototype.format = function (format) {
 var has = Object.prototype.hasOwnProperty;
 
 var defaults = {
-    allowDots: true,
+    allowDots: false,
     allowPrototypes: false,
     arrayLimit: 20,
     decoder: utils.decode,
@@ -512,22 +512,12 @@ const stringify = function(object, options) {
     return values.join("&");
 }
 
-axios.defaults.baseURL = "http://api.leyou.com/api";
+axios.defaults.baseURL = "http://api.peanut.com/api";
 axios.defaults.timeout = 5000;
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true
 
 // 配置对象
 const ly = leyou = {
-
-    /**
-     * 校验用户登录
-     * @returns {*}
-     */
-    verifyUser(){
-        return this.http.get("/auth/verify")
-    },
-
-
     /**
      * 对encodeURI()编码过的 URI 进行解码。并且获取其中的指定参数
      * @param name
@@ -555,14 +545,6 @@ const ly = leyou = {
         del(key) {
             return localStorage.removeItem(key);
         }
-    },
-    /**
-     * 字符串截取
-     * @param val
-     * @returns {string}
-     */
-    formatStr(val){
-        return val.substr(0,15);
     },
     /**
      * 将整数价格变为小数
