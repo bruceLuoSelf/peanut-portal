@@ -307,23 +307,23 @@
                             <div class="p-img">
                                 <a href="item.html" target="_blank"><img :src="goods.selectedSku.image" height="200"/></a>
                                 <ul class="skus">
-                                    <li class="selected"><img src="img/_/mobile01.png"></li>
-                                    <li class=""><img src="img/_/mobile01.png"></li>
-                                    <li class=""><img src="img/_/mobile01.png"></li>
+                                    <li :class="{selected: goods.selectedSku.id === sku.id}" @mouseenter="goods.selectedSku = sku" v-for="sku in goods.skus" :key="sku.id">
+                                        <img src="img/_/mobile01.png">
+                                    </li>
                                 </ul>
                             </div>
                             <div class="clearfix"></div>
                             <div class="price">
                                 <strong>
                                     <em>¥</em>
-                                    <i v-text="goods.selectedSku.price"></i>
+                                    <i v-text="ly.formatPrice(goods.selectedSku.price)"></i>
                                 </strong>
                             </div>
                             <div class="attr">
-                                <em v-text="goods.selectedSku.title"></em>
+                                <em v-text="goods.selectedSku.title.substring(0, 24) + '...'"></em>
                             </div>
                             <div class="cu">
-                                <em><span>促</span>{{goods.subTitle}}</em>
+                                <em><span>促</span>{{goods.subTitle.substring(0, 15)+ '...'}}</em>
                             </div>
                             <div class="commit">
                                 <i class="command">已有2000人评价</i>
@@ -463,6 +463,7 @@
     var vm = new Vue({
         el: "#searchApp",
         data: {
+            ly,
             search:{},
             goodsList:[],
             total:0,
@@ -478,24 +479,19 @@
         },
         methods:{
             loadData(){
-                ly.http.post("/search/page", this.search).then(resp => {
+                ly.http.post("/search/page", this.search).then(({data}) => {
                     // 保存返回的结果
-                    console.log("1");
-                    this.total = resp.data.total;
-                    this.totalPage = resp.data.totalPage;
+                    this.total = data.page;
+                    this.totalPage = data.totalPage;
                     // 保存当前页面商品
-                    console.log("2");
-                    resp.data.items.forEach(goods => {
+                    this.goodsList = data.items;
+                    data.items.forEach(goods => {
                         goods.skus = JSON.parse(goods.skus);
-                        goods.selectedSku = goods.sku[0]
+                        goods.selectedSku = goods.skus[0]
                     })
-                    console.log("3");
-                    this.goodsList = resp.data.items;
-                    console.log("goodsList");
-                    console.log(goodsList)
                 }).catch(error => {
-
-                })
+                    console.log("exception");
+                });
             }
         },
         components:{
